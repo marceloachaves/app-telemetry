@@ -26,10 +26,12 @@ de série temporal.
     - Deve validar se o dispositivo pertence ao tenantId do usuário autenticado (simule
 o usuário logado via middleware ou JWT fixo).
     - Salvar o registro no ClickHouse.
+
 - [ ] Endpoints de Leitura da API **1h**
-    - GET /telemetry/:deviceId: Retorna as últimas 10 leituras do sensor.
     - GET /telemetry/:deviceId: Retorna as últimas 10 leituras do sensor.
     - Importante: Garanta que um usuário de um Tenant não consiga ver dados de
 dispositivos de outro Tenant.
+
 - [ ] Adicione ao menos um teste de integração que valide o isolamento entre Tenants. **1h**
+
 - [ ] Refatoração, testes e melhorias **1h**

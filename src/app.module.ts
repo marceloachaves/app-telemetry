@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ClickhouseModule } from './clickhouse/clickhouse.module';
+import { PostgresModule } from './postgres/postgres.module';
 
 @Module({
-  imports: [ClickhouseModule],
+  imports: [ClickhouseModule, PostgresModule],
   controllers: [],
   providers: [],
 })
