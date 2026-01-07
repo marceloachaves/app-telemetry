@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Req,
   UnprocessableEntityException,
@@ -13,6 +15,7 @@ import { TelemetryMapper } from 'src/telemetry/application/mappers/telemetry.map
 import { CreateTelemetryUsecase } from 'src/telemetry/application/usecases/create-telemetry.usecase';
 import { Telemetry } from 'src/telemetry/domain/telemetry.entity';
 import { TelemetryRepositoryAbstract } from 'src/telemetry/domain/telemetry.repository';
+import { GetTelemetryUsecase } from 'src/telemetry/application/usecases/get-telemetry.usecase';
 
 // interface RequestWithUser extends Request {
 //   user?: any;
@@ -44,5 +47,23 @@ export class TelemetryController {
     await createTelemetryUsecase.execute(
       TelemetryMapper.fromCreateTelemetryDto(createTelemetryDto),
     );
+  }
+
+  @Get(':deviceId')
+  async findByDevice(
+    @Param('deviceId') deviceId: string,
+    @Req() req: requestUserInterface.RequestWithUser,
+  ) {
+    if (!req.user) {
+      throw new UnprocessableEntityException(
+        'User information is missing from request',
+      );
+    }
+    const getTelemetryUsecase = new GetTelemetryUsecase(
+      this.telemetryRepository,
+      this.devicesRepository,
+      req.user,
+    );
+    return getTelemetryUsecase.execute(deviceId);
   }
 }
