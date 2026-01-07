@@ -33,7 +33,8 @@ export class TelemetryController {
   async create(
     @Body() createTelemetryDto: CreateTelemetryDto,
     @Req() req: requestUserInterface.RequestWithUser,
-  ) {
+  ): Promise<{ message: string }> {
+    console.log('Usuario:' + JSON.stringify(req.user));
     if (!req.user) {
       throw new UnprocessableEntityException(
         'User information is missing from request',
@@ -44,7 +45,7 @@ export class TelemetryController {
       this.devicesRepository,
       req.user,
     );
-    await createTelemetryUsecase.execute(
+    return await createTelemetryUsecase.execute(
       TelemetryMapper.fromCreateTelemetryDto(createTelemetryDto),
     );
   }

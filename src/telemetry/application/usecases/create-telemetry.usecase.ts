@@ -10,7 +10,7 @@ export class CreateTelemetryUsecase {
     private readonly user: { tenantId: string },
   ) {}
 
-  async execute(telemetry: Telemetry): Promise<void> {
+  async execute(telemetry: Telemetry): Promise<{ message: string }> {
     const tenantId = await this.deviceRepository.findTenantIdByDeviceId(
       telemetry.deviceId,
     );
@@ -27,6 +27,6 @@ export class CreateTelemetryUsecase {
       );
     }
 
-    await this.telemetryRepository.save(telemetry);
+    return await this.telemetryRepository.save(telemetry);
   }
 }

@@ -1,16 +1,20 @@
 import { Device } from 'src/telemetry/domain/device.entity';
-import { db } from './db';
+import { Inject, Injectable } from '@nestjs/common';
+import { DbService } from './db.service';
 import { devicesTable } from './schema';
 import { eq } from 'drizzle-orm';
 
+@Injectable()
 export class DeviceRepository {
+  constructor(@Inject(DbService) private readonly dbService: DbService) {}
+
   async findAll(): Promise<Device[]> {
-    const records = await db.select().from(devicesTable);
+    const records = await this.dbService.db.select().from(devicesTable);
     return records.map((r) => new Device(r.id, r.name, r.tenantId));
   }
 
   async findTenantIdByDeviceId(deviceId: string): Promise<string | null> {
-    const record = await db
+    const record = await this.dbService.db
       .select({ tenantId: devicesTable.tenantId })
       .from(devicesTable)
       .where(eq(devicesTable.id, deviceId))
