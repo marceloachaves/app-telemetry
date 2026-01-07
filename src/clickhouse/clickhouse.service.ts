@@ -1,0 +1,96 @@
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { createClient, ClickHouseClient } from '@clickhouse/client';
+
+@Injectable()
+export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
+  private static instance: ClickHouseService;
+  private client: ClickHouseClient;
+
+  constructor() {
+    if (ClickHouseService.instance) {
+      return ClickHouseService.instance;
+    }
+    ClickHouseService.instance = this;
+  }
+
+  async onModuleInit() {
+    await this.connect();
+  }
+
+  async onModuleDestroy() {
+    await this.disconnect();
+  }
+
+  private async connect() {
+    this.client = createClient({
+      host: process.env.CLICKHOUSE_HOST || 'http://localhost:8123',
+      username: process.env.CLICKHOUSE_USER || 'admin',
+      password: process.env.CLICKHOUSE_PASSWORD || 'password',
+      database: process.env.CLICKHOUSE_DATABASE || 'telemetry',
+    });
+
+    // Test connection
+    try {
+      await this.client.ping();
+      console.log('ClickHouse connected successfully');
+    } catch (error) {
+      console.error('Failed to connect to ClickHouse:', error);
+      throw error;
+    }
+  }
+
+  private async disconnect() {
+    if (this.client) {
+      await this.client.close();
+      console.log('ClickHouse connection closed');
+    }
+  }
+
+  getClient(): ClickHouseClient {
+    if (!this.client) {
+      throw new Error('ClickHouse client not initialized');
+    }
+    return this.client;
+  }
+
+  static getInstance(): ClickHouseService {
+    if (!ClickHouseService.instance) {
+      ClickHouseService.instance = new ClickHouseService();
+    }
+    return ClickHouseService.instance;
+  }
+
+  async query(sql: string, params?: Record<string, any>) {
+    return await this.client.query({
+      query: sql,
+      query_params: params,
+      format: 'JSONEachRow',
+    });
+  }
+
+  async insert(table: string, data: any[]) {
+    // Validar nome da tabela para evitar injection
+    this.validateTableName(table);
+    
+    return await this.client.insert({
+      table,
+      values: data,
+      format: 'JSONEachRow',
+    });
+  }
+
+  async ping() {
+    return await this.client.ping();
+  }
+
+  // Métodos de validação para proteção extra
+  private validateTableName(tableName: string): void {
+    // Permite apenas caracteres alfanuméricos, underscore e ponto (para database.table)
+    const validTableNameRegex = /^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?$/;
+    
+    if (!validTableNameRegex.test(tableName)) {
+      throw new Error(`Invalid table name: ${tableName}`);
+    }
+  }
+
+}
