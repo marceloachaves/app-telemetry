@@ -1,4 +1,4 @@
-import { Telemetry } from '../../domain/telemetry.entity';
+import { Telemetry } from '../../domain/entities/telemetry.entity';
 import { CreateTelemetryDto } from '../dtos/create-telemetry.dto';
 
 export class TelemetryMapper {

@@ -1,5 +1,5 @@
-import { OutputTelemetryDto } from '../application/dtos/output-telemtry.dto';
-import { Telemetry } from './telemetry.entity';
+import { OutputTelemetryDto } from '../../application/dtos/output-telemtry.dto';
+import { Telemetry } from '../entities/telemetry.entity';
 
 export abstract class TelemetryRepositoryAbstract {
   abstract save(telemetry: Telemetry): Promise<{ message: string }>;

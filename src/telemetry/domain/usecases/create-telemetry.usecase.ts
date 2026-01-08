@@ -1,7 +1,7 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { Telemetry } from '../../domain/telemetry.entity';
-import { TelemetryRepositoryAbstract } from '../../domain/telemetry.repository';
-import { DeviceRepositoryAbstract } from 'src/telemetry/domain/device.repository';
+import { Telemetry } from '../entities/telemetry.entity';
+import { TelemetryRepositoryAbstract } from '../repositories/telemetry.repository';
+import { DeviceRepositoryAbstract } from 'src/telemetry/domain/repositories/device.repository';
 
 export class CreateTelemetryUsecase {
   constructor(

@@ -1,4 +1,4 @@
-import { Device } from 'src/telemetry/domain/device.entity';
+import { Device } from 'src/telemetry/domain/entities/device.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { DbService } from './db.service';
 import { devicesTable } from './schema';

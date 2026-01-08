@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ClickHouseService } from 'src/clickhouse/clickhouse.service';
-import { DeviceRepository } from 'src/postgres/device.repository';
 import { OutputTelemetryDto } from 'src/telemetry/application/dtos/output-telemtry.dto';
-import { Telemetry } from 'src/telemetry/domain/telemetry.entity';
-import { TelemetryRepositoryAbstract } from 'src/telemetry/domain/telemetry.repository';
+import { Telemetry } from 'src/telemetry/domain/entities/telemetry.entity';
+import { TelemetryRepositoryAbstract } from 'src/telemetry/domain/repositories/telemetry.repository';
 
 @Injectable()
 export class ClickhouseTelemetryRepository extends TelemetryRepositoryAbstract {

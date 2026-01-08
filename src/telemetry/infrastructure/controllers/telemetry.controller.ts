@@ -7,19 +7,14 @@ import {
   Req,
   UnprocessableEntityException,
 } from '@nestjs/common';
-// import { Request } from 'express';
 import * as requestUserInterface from './request-user.interface';
 import { DeviceRepository } from 'src/postgres/device.repository';
 import { CreateTelemetryDto } from 'src/telemetry/application/dtos/create-telemetry.dto';
 import { TelemetryMapper } from 'src/telemetry/application/mappers/telemetry.mapper';
-import { CreateTelemetryUsecase } from 'src/telemetry/application/usecases/create-telemetry.usecase';
-import { Telemetry } from 'src/telemetry/domain/telemetry.entity';
-import { TelemetryRepositoryAbstract } from 'src/telemetry/domain/telemetry.repository';
-import { GetTelemetryUsecase } from 'src/telemetry/application/usecases/get-telemetry.usecase';
-
-// interface RequestWithUser extends Request {
-//   user?: any;
-// }
+import { CreateTelemetryUsecase } from 'src/telemetry/domain/usecases/create-telemetry.usecase';
+import { Telemetry } from 'src/telemetry/domain/entities/telemetry.entity';
+import { TelemetryRepositoryAbstract } from 'src/telemetry/domain/repositories/telemetry.repository';
+import { GetTelemetryUsecase } from 'src/telemetry/domain/usecases/get-telemetry.usecase';
 
 @Controller('telemetry')
 export class TelemetryController {
