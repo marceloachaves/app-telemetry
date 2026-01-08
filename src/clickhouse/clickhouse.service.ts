@@ -1,10 +1,19 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private static instance: ClickHouseService;
   private client: ClickHouseClient;
+
+  @Inject(ConfigService)
+  private readonly configService: ConfigService;
 
   constructor() {
     if (ClickHouseService.instance) {
@@ -22,11 +31,18 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async connect() {
+    console.log('Connecting to ClickHouse...');
+
+    const url = this.configService.get<string>('CLICKHOUSE_URL');
+    const username = this.configService.get<string>('CLICKHOUSE_USER');
+    const password = this.configService.get<string>('CLICKHOUSE_PASSWORD');
+    const database = this.configService.get<string>('CLICKHOUSE_DB');
+
     this.client = createClient({
-      host: process.env.CLICKHOUSE_HOST || 'http://localhost:8123',
-      username: process.env.CLICKHOUSE_USER || 'admin',
-      password: process.env.CLICKHOUSE_PASSWORD || 'password',
-      database: process.env.CLICKHOUSE_DATABASE || 'telemetry',
+      url: url || 'http://localhost:8123',
+      username: username || 'admin',
+      password: password || 'password',
+      database: database || 'telemetry',
     });
 
     // Test connection
@@ -71,7 +87,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   async insert(table: string, data: any[]) {
     // Validar nome da tabela para evitar injection
     this.validateTableName(table);
-    
+
     return await this.client.insert({
       table,
       values: data,
@@ -87,10 +103,9 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private validateTableName(tableName: string): void {
     // Permite apenas caracteres alfanuméricos, underscore e ponto (para database.table)
     const validTableNameRegex = /^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?$/;
-    
+
     if (!validTableNameRegex.test(tableName)) {
       throw new Error(`Invalid table name: ${tableName}`);
     }
   }
-
 }

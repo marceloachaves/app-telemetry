@@ -29,7 +29,6 @@ export class TelemetryController {
     @Body() createTelemetryDto: CreateTelemetryDto,
     @Req() req: requestUserInterface.RequestWithUser,
   ): Promise<{ message: string }> {
-    console.log('Usuario:' + JSON.stringify(req.user));
     if (!req.user) {
       throw new UnprocessableEntityException(
         'User information is missing from request',

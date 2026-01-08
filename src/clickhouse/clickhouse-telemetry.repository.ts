@@ -35,6 +35,7 @@ export class ClickhouseTelemetryRepository extends TelemetryRepositoryAbstract {
       );
       return await result.json();
     } catch (error) {
+      console.error('ClickHouse query error:', error);
       throw new Error(
         `Failed to retrieve telemetry data for device: ${error.message}`,
       );

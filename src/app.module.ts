@@ -3,10 +3,15 @@ import { FakeUserMiddleware } from './fake-user/fake-user.middleware';
 import { ClickhouseModule } from './clickhouse/clickhouse.module';
 import { PostgresModule } from './postgres/postgres.module';
 import { TelemetryModule } from './telemetry/telemetry.module';
-
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ClickhouseModule, PostgresModule, TelemetryModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    ClickhouseModule,
+    PostgresModule,
+    TelemetryModule,
+  ],
   controllers: [],
   providers: [],
 })
