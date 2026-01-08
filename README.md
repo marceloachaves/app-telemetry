@@ -31,3 +31,57 @@ de série temporal.
 - [ ] Adicione ao menos um teste de integração que valide o isolamento entre Tenants. **1h**
 
 - [ ] Refatoração, testes e melhorias **1h**
+
+---
+
+## Como rodar a aplicação
+
+Primeiramente é subir os bancos no docker-compose. É necessário rodar o docker-compose na raiz do projeto.
+
+```bash
+docker compose up -d
+```
+
+Com os containers healthy. É preciso executar o seguinte código que vai fazer a migração e a inserção de dados na tabela de metadados devices no postgres.
+
+```bash
+npm run db:migrate
+npm run db:see
+```
+
+Já o clickhouse não foi feita a migração dessa forma. Foi criado um script na pasta /clickhouse/init/create_table.sql e ela é injetada diretamente no container do clickhouse. Mas foi feito dessa forma somente para facilitar e para demonstrar uma outra forma de subir localmente.
+
+Com os bancos criados, agora é executar a aplicação. Pode usar o seguinte comando:
+
+```bash
+npm run start
+```
+
+Com a aplicação inicializada pode executar os seguintes comandos:
+
+Para criação da telemetria(POST /telemetry):
+
+```bash
+curl --location 'localhost:3000/telemetry' \
+--header 'Content-Type: application/json' \
+--data '{
+    "deviceId": "1",
+    "value": 123
+}'
+```
+
+Para busca da telemetria(GET /telemetry/:deviceId):
+
+```bash
+curl --location 'localhost:3000/telemetry/1'
+```
+
+---
+
+## Teste de integração
+
+Execute o seguinte comando:
+
+```bash
+npm run test:e2e
+```
