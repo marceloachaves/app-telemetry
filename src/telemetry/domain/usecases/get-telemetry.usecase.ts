@@ -15,7 +15,7 @@ export class GetTelemetryUsecase {
     const tenantId = await this.deviceRepository.findTenantIdByDeviceId(deviceId);
 
     if (!tenantId) {
-      throw new UnprocessableEntityException('Device not found or does not exist');
+      return [];
     }
 
     if (tenantId !== this.user?.tenantId) {
