@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { createClient, ClickHouseClient } from '@clickhouse/client';
 import { ConfigService } from '@nestjs/config';
 
@@ -14,6 +9,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
   @Inject(ConfigService)
   private readonly configService: ConfigService;
+  private readonly logger: Logger = new Logger(ClickHouseService.name);
 
   constructor() {
     if (ClickHouseService.instance) {
@@ -31,7 +27,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async connect() {
-    console.log('Connecting to ClickHouse...');
+    this.logger.log('Connecting to ClickHouse...');
 
     const url = this.configService.get<string>('CLICKHOUSE_URL');
     const username = this.configService.get<string>('CLICKHOUSE_USER');
@@ -48,9 +44,9 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     // Test connection
     try {
       await this.client.ping();
-      console.log('ClickHouse connected successfully');
+      this.logger.log('ClickHouse connected successfully');
     } catch (error) {
-      console.error('Failed to connect to ClickHouse:', error);
+      this.logger.error('Failed to connect to ClickHouse:', error);
       throw error;
     }
   }
@@ -58,7 +54,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private async disconnect() {
     if (this.client) {
       await this.client.close();
-      console.log('ClickHouse connection closed');
+      this.logger.log('ClickHouse connection closed');
     }
   }
 

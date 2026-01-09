@@ -6,15 +6,17 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class DbService implements OnModuleDestroy {
-  public readonly pool: Pool;
-  public readonly db: ReturnType<typeof drizzle>;
+  public pool: Pool;
+  public db: ReturnType<typeof drizzle>;
 
   constructor(readonly configService: ConfigService) {
-    const url = this.configService.get<string>('DATABASE_URL');
+    let url = this.configService.get<string>('DATABASE_URL');
+    if (!url) {
+      url = 'postgres://user:password@localhost:5432/mydatabase';
+    }
 
     this.pool = new Pool({
-      connectionString:
-        url || 'postgres://user:password@localhost:5432/mydatabase',
+      connectionString: url,
     });
     this.db = drizzle(this.pool, { schema });
   }

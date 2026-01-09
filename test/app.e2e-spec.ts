@@ -1,11 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import {
-  startContainers,
-  stopContainers,
-  postgresContainer,
-  clickhouseContainer,
-} from './testcontainers';
+import { startContainers, stopContainers, postgresContainer, clickhouseContainer } from './testcontainers';
 import request from 'supertest';
 import { createTestDb } from './drizzle-test-client';
 import { devicesTable } from '../src/postgres/schema';
@@ -14,13 +9,13 @@ import { AppModule } from 'src/app.module';
 
 describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
   let app: INestApplication;
-  let db: ReturnType<typeof createTestDb>;
-  let clickhouse: ClickHouse;
+  // let db: ReturnType<typeof createTestDb>;
+  let clickhouse: ClickHouse | undefined;
 
   beforeAll(async () => {
     await setupContainers();
-    db = await setupPostgres();
-    clickhouse = await setupClickHouse();
+    await setupPostgres();
+    clickhouse = setupClickHouse();
     await setupClickHouseSchema(clickhouse);
     await setupApp();
   }, 50000);
@@ -45,11 +40,11 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
       { id: '2', name: 'Device 2', tenantId: 'tenant-001' },
       { id: '3', name: 'Device 3', tenantId: 'tenant-002' },
     ]);
-    return db;
+    // return db;
   }
 
-  async function setupClickHouse() {
-    let clickhouseInstance;
+  function setupClickHouse() {
+    let clickhouseInstance: ClickHouse | undefined;
     try {
       clickhouseInstance = new ClickHouse({
         url: `http://${clickhouseContainer.getHost()}:${clickhouseContainer.getMappedPort(8123)}`,
@@ -64,7 +59,11 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
     return clickhouseInstance;
   }
 
-  async function setupClickHouseSchema(clickhouseInstance) {
+  async function setupClickHouseSchema(clickhouseInstance: ClickHouse | undefined) {
+    if (!clickhouseInstance) {
+      console.error('ClickHouse instance is undefined');
+      return;
+    }
     await clickhouseInstance
       .query(`CREATE DATABASE IF NOT EXISTS telemetry;`)
       .toPromise()
@@ -88,9 +87,7 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
       .catch((err) => {
         console.error('Error creating ClickHouse table:', err);
       });
-    console.log(
-      'Setup completo: Containers iniciados, banco de dados criado e dados de teste inseridos.',
-    );
+    console.log('Setup completo: Containers iniciados, banco de dados criado e dados de teste inseridos.');
   }
 
   async function setupApp() {
@@ -114,14 +111,12 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
     };
 
     // Act & Assert
-    const response = await request(app.getHttpServer())
+    const response: { status: number; body: { message: string } } = await request(app.getHttpServer())
       .post('/telemetry')
       .send(createTelemetryDto);
 
     expect(response.status).toBe(422); // UnprocessableEntityException
-    expect(response.body.message).toContain(
-      "does not belong to the user's tenant",
-    );
+    expect(response.body.message).toContain("does not belong to the user's tenant");
   });
 
   it('deve aceitar telemetria se device pertencer ao tenant', async () => {
@@ -130,7 +125,7 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
       value: 25.0,
     };
 
-    const response = await request(app.getHttpServer())
+    const response: { status: number; body: { message: string } } = await request(app.getHttpServer())
       .post('/telemetry')
       .send(createTelemetryDto);
 
@@ -147,11 +142,11 @@ describe('Integration Test (Drizzle + Postgres + ClickHouse)', () => {
   }, 12000);
 
   it('deve rejeitar busca de telemetria de device de outro tenant', async () => {
-    const response = await request(app.getHttpServer()).get('/telemetry/3');
+    const response: { status: number; body: { message: string } } = await request(app.getHttpServer()).get(
+      '/telemetry/3',
+    );
 
     expect(response.status).toBe(422);
-    expect(response.body.message).toContain(
-      "does not belong to the user's tenant",
-    );
+    expect(response.body.message).toContain("does not belong to the user's tenant");
   });
 });

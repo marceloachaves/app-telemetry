@@ -13,28 +13,28 @@ async function seed() {
     {
       id: '1',
       name: 'device-1',
-      tenantId: 'tenant-001'
+      tenantId: 'tenant-001',
     },
     {
       id: '2',
       name: 'device-2',
-      tenantId: 'tenant-001'
+      tenantId: 'tenant-001',
     },
     {
       id: '3',
       name: 'device-3',
-      tenantId: 'tenant-002'
+      tenantId: 'tenant-002',
     },
     {
       id: '4',
       name: 'device-4',
-      tenantId: 'tenant-002'
+      tenantId: 'tenant-002',
     },
     {
       id: '5',
       name: 'device-5',
-      tenantId: 'tenant-002'
-    }
+      tenantId: 'tenant-002',
+    },
   ]);
 
   console.log('Seed executado com sucesso');

@@ -1,7 +1,4 @@
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from '@testcontainers/postgresql';
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { StartedTestContainer } from 'testcontainers';
 import { ClickHouseContainer } from '@testcontainers/clickhouse';
 
@@ -15,9 +12,7 @@ export async function startContainers() {
     .withPassword('test')
     .start();
 
-  clickhouseContainer = await new ClickHouseContainer(
-    'clickhouse/clickhouse-server:23',
-  )
+  clickhouseContainer = await new ClickHouseContainer('clickhouse/clickhouse-server:23')
     .withUsername('meuuser')
     .withPassword('minhasenha')
     .withDatabase('telemetry')
@@ -38,9 +33,7 @@ export async function startContainers() {
   process.env.POSTGRES_DB = postgresContainer.getDatabase();
 
   process.env.CLICKHOUSE_HOST = clickhouseContainer.getHost();
-  process.env.CLICKHOUSE_PORT = clickhouseContainer
-    .getMappedPort(8123)
-    .toString();
+  process.env.CLICKHOUSE_PORT = clickhouseContainer.getMappedPort(8123).toString();
   process.env.CLICKHOUSE_URL = `http://${clickhouseContainer.getHost()}:${clickhouseContainer.getMappedPort(8123)}`;
   process.env.CLICKHOUSE_USER = 'meuuser';
   process.env.CLICKHOUSE_PASSWORD = 'minhasenha';

@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { UnprocessableEntityException } from '@nestjs/common';
 import { Telemetry } from '../entities/telemetry.entity';
 import { TelemetryRepositoryAbstract } from '../repositories/telemetry.repository';
 import { DeviceRepositoryAbstract } from 'src/telemetry/domain/repositories/device.repository';
@@ -11,20 +11,14 @@ export class CreateTelemetryUsecase {
   ) {}
 
   async execute(telemetry: Telemetry): Promise<{ message: string }> {
-    const tenantId = await this.deviceRepository.findTenantIdByDeviceId(
-      telemetry.deviceId,
-    );
+    const tenantId = await this.deviceRepository.findTenantIdByDeviceId(telemetry.deviceId);
 
     if (!tenantId) {
-      throw new UnprocessableEntityException(
-        'Device not found or does not exist',
-      );
+      throw new UnprocessableEntityException('Device not found or does not exist');
     }
 
     if (tenantId !== this.user?.tenantId) {
-      throw new UnprocessableEntityException(
-        "Device does not belong to the user's tenant",
-      );
+      throw new UnprocessableEntityException("Device does not belong to the user's tenant");
     }
 
     return await this.telemetryRepository.save(telemetry);

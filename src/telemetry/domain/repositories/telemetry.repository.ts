@@ -1,10 +1,7 @@
-import { OutputTelemetryDto } from '../../application/dtos/output-telemtry.dto';
+import { OutputTelemetryDto } from '../../application/dtos/output-telemetry.dto';
 import { Telemetry } from '../entities/telemetry.entity';
 
 export abstract class TelemetryRepositoryAbstract {
   abstract save(telemetry: Telemetry): Promise<{ message: string }>;
-  abstract findLatestByDevice(
-    deviceId: string,
-    limit: number,
-  ): Promise<OutputTelemetryDto[]>;
+  abstract findLatestByDevice(deviceId: string, limit: number): Promise<OutputTelemetryDto[]>;
 }

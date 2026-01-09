@@ -6,12 +6,7 @@ import { TelemetryModule } from './telemetry/telemetry.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    ClickhouseModule,
-    PostgresModule,
-    TelemetryModule,
-  ],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), ClickhouseModule, PostgresModule, TelemetryModule],
   controllers: [],
   providers: [],
 })
