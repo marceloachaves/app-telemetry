@@ -42,14 +42,20 @@ Primeiramente é subir os bancos no docker-compose. É necessário rodar o docke
 docker compose up -d
 ```
 
-Com os containers healthy. É preciso executar o seguinte código que vai fazer a migração e a inserção de dados na tabela de metadados devices no postgres.
+Com os containers healthy. O próximo passo é rodar:
+
+```bash
+npm install
+```
+
+Depois é necessário fazer a migração e a inserção de dados na tabela de metadados devices no postgres:
 
 ```bash
 npm run db:migrate
-npm run db:see
+npm run db:seed
 ```
 
-Já o clickhouse não foi feita a migração dessa forma. Foi criado um script na pasta /clickhouse/init/create_table.sql e ela é injetada diretamente no container do clickhouse. Mas foi feito dessa forma somente para facilitar e para demonstrar uma outra forma de subir localmente.
+Já o clickhouse não foi feita a migração dessa forma. Foi criado um script na pasta /clickhouse/init/create_table.sql e ela é injetada diretamente no container do clickhouse. Foi feito dessa forma somente para facilitar e para demonstrar uma outra forma de subir localmente.
 
 Com os bancos criados, agora é executar a aplicação. Pode usar o seguinte comando:
 
