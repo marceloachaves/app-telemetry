@@ -43,7 +43,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
     // Test connection
     try {
-      await this.client.ping();
+      await this.client.query({ query: 'SELECT 1', format: 'JSONEachRow' });
       this.logger.log('ClickHouse connected successfully');
     } catch (error) {
       this.logger.error('Failed to connect to ClickHouse:', error);

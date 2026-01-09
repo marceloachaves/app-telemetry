@@ -19,6 +19,14 @@ export class DbService implements OnModuleDestroy {
       connectionString: url,
     });
     this.db = drizzle(this.pool, { schema });
+
+    // Verificação de conexão
+    this.pool.query('SELECT 1', (err) => {
+      if (err) {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        throw new Error(`Failed to connect to Postgres: ${errorMsg}`);
+      }
+    });
   }
 
   async onModuleDestroy() {
