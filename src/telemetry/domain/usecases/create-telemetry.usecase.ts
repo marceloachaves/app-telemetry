@@ -2,12 +2,13 @@ import { UnprocessableEntityException } from '@nestjs/common';
 import { Telemetry } from '../entities/telemetry.entity';
 import { TelemetryRepositoryAbstract } from '../repositories/telemetry.repository';
 import { DeviceRepositoryAbstract } from 'src/telemetry/domain/repositories/device.repository';
+import { FakeUser } from 'src/fake-user/dominio/fake-user.entity';
 
 export class CreateTelemetryUsecase {
   constructor(
     private readonly telemetryRepository: TelemetryRepositoryAbstract,
     private readonly deviceRepository: DeviceRepositoryAbstract,
-    private readonly user: { tenantId: string },
+    private readonly user: FakeUser,
   ) {}
 
   async execute(telemetry: Telemetry): Promise<{ message: string }> {
