@@ -86,8 +86,18 @@ curl --location 'localhost:3000/telemetry/1'
 
 ## Teste de integração
 
+Execute o seguinte comando(Vai rodar o teste unitário e os testes de integração):
+
+```bash
+npm run test
+```
+
+---
+
+## Teste E2E
+
 Execute o seguinte comando:
 
 ```bash
-npm run test:e2e
+npm run teste:e2e
 ```
